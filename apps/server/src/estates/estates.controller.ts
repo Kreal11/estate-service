@@ -53,6 +53,7 @@ export class EstatesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.estatesService.remove(+id);
   }

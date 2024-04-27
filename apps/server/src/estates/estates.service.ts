@@ -69,7 +69,13 @@ export class EstatesService {
     return await this.estateRepository.update(id, updateEstateDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} estate`;
+  async remove(id: number) {
+    const estate = await this.estateRepository.findOne({
+      where: { id },
+    });
+
+    if (!estate) throw new NotFoundException('Estate was not found');
+
+    return await this.estateRepository.delete(id);
   }
 }
