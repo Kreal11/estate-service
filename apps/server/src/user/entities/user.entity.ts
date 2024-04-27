@@ -1,9 +1,9 @@
-// import { Estate } from 'src/estates/entities/estate.entity';
+import { Estate } from 'src/estates/entities/estate.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  //   OneToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,8 +19,8 @@ export class User {
   @Column()
   password: string;
 
-  //   @OneToMany(() => Estate, (estate) => estate.user)
-  //   estates: Estate[];
+  @OneToMany(() => Estate, (estate) => estate.user)
+  estates: Estate[];
 
   @CreateDateColumn()
   createdAt: Date;

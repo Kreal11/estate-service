@@ -1,11 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateEstateDto } from './dto/create-estate.dto';
 import { UpdateEstateDto } from './dto/update-estate.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Estate } from './entities/estate.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class EstatesService {
-  create(createEstateDto: CreateEstateDto) {
-    return 'This action adds a new estate';
+  constructor(
+    @InjectRepository(Estate)
+    private readonly estateRepository: Repository<Estate>,
+  ) {}
+
+  async create(createEstateDto: CreateEstateDto, id: number) {
+    const isExist = await this.estateRepository.findBy({
+      user: { id },
+      title: createEstateDto.title,
+    });
+
+    if (isExist.length)
+      throw new BadRequestException('This estate already exists');
+
+    const newEstate = {
+      title: createEstateDto.title,
+      user: {
+        id,
+      },
+    };
+
+    return await this.estateRepository.save(newEstate);
   }
 
   findAll() {
