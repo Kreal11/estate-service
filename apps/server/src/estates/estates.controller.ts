@@ -41,6 +41,7 @@ export class EstatesController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.estatesService.findOne(+id);
   }

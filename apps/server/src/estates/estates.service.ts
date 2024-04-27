@@ -59,8 +59,14 @@ export class EstatesService {
     return estate;
   }
 
-  update(id: number, updateEstateDto: UpdateEstateDto) {
-    return `This action updates a #${id} estate`;
+  async update(id: number, updateEstateDto: UpdateEstateDto) {
+    const estate = await this.estateRepository.findOne({
+      where: { id },
+    });
+
+    if (!estate) throw new NotFoundException('Estate was not found');
+
+    return await this.estateRepository.update(id, updateEstateDto);
   }
 
   remove(id: number) {
