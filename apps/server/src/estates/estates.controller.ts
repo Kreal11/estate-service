@@ -8,6 +8,8 @@ import {
   Delete,
   Req,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { EstatesService } from './estates.service';
 import { CreateEstateDto } from './dto/create-estate.dto';
@@ -27,13 +29,15 @@ export class EstatesController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   create(@Body() createEstateDto: CreateEstateDto, @Req() req: User) {
     return this.estatesService.create(createEstateDto, +req.user.id);
   }
 
   @Get()
-  findAll() {
-    return this.estatesService.findAll();
+  @UseGuards(JwtAuthGuard)
+  findAll(@Req() req: User) {
+    return this.estatesService.findAll(+req.user.id);
   }
 
   @Get(':id')
@@ -42,6 +46,7 @@ export class EstatesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateEstateDto: UpdateEstateDto) {
     return this.estatesService.update(+id, updateEstateDto);
   }

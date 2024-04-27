@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEstateDto } from './dto/create-estate.dto';
 import { UpdateEstateDto } from './dto/update-estate.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,12 +35,28 @@ export class EstatesService {
     return await this.estateRepository.save(newEstate);
   }
 
-  findAll() {
-    return `This action returns all estates`;
+  async findAll(id: number) {
+    return await this.estateRepository.find({
+      where: {
+        user: { id },
+      },
+      // relations: {
+      //   transactions: true,
+      // },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} estate`;
+  async findOne(id: number) {
+    const estate = await this.estateRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!estate) throw new NotFoundException('Estate was not found');
+
+    return estate;
   }
 
   update(id: number, updateEstateDto: UpdateEstateDto) {
